@@ -1,9 +1,18 @@
-# 🚀 Task Flow Manager
+# 🚀 Flow Task Manager
+
+<p align="center">
+  <strong>A modern, responsive, and interactive task management web application built with HTML, CSS, and Vanilla JavaScript.</strong>
+</p>
+
+<p align="center">
+  Organize tasks • Track progress • Manage priorities • Stay productive
+</p>
+
 ---
 
 ## 📌 Overview
 
-**Task Flow Manager** is a modern productivity-focused web application designed to simplify daily task planning and organization.
+**Flow Task Manager** is a modern productivity-focused web application designed to simplify daily task planning and organization.
 
 The application provides an intuitive interface for creating, managing, filtering, searching, and tracking tasks while maintaining data directly in the browser using **Local Storage**.
 
@@ -546,10 +555,16 @@ Git • GitHub • Full Stack Development
 
 ## ⭐ Support
 
-If you find **Task Flow Manager** useful or interesting, consider giving the repository a ⭐.
+If you find **Flow Task Manager** useful or interesting, consider giving the repository a ⭐.
 
 It helps support the project and makes it easier for other developers to discover.
 
 ---
 
-🚀 Plan smarter. Stay focused. Keep your tasks flowing. Built with ❤️ using HTML, CSS & JavaScript
+<p align="center">
+  <strong>🚀 Plan smarter. Stay focused. Keep your tasks flowing.</strong>
+</p>
+
+<p align="center">
+  Built with ❤️ using HTML, CSS & JavaScript
+</p>
