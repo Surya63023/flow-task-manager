@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Flow — Daily Task Rail</title>
+    <meta
+      name="description"
+      content="Flow: a timeline-driven daily task manager with live progress, dark/light modes and smooth motion."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Ambient background -->
+    <div class="ambient" aria-hidden="true">
+      <div class="blob blob-a"></div>
+      <div class="blob blob-b"></div>
+      <div class="grain"></div>
+    </div>
+
+    <!-- ============ TOP BAR ============ -->
+    <header class="topbar">
+      <div class="topbar__brand">
+        <span class="brand-mark"
+          ><i class="fa-solid fa-diagram-project"></i
+        ></span>
+        <span class="brand-name">Task Flow</span>
+      </div>
+
+      <div class="topbar__search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Search tasks…"
+          autocomplete="off"
+        />
+        <kbd>/</kbd>
+      </div>
+
+      <div class="topbar__actions">
+        <button
+          class="icon-btn"
+          id="themeToggle"
+          aria-label="Toggle light and dark theme"
+          title="Toggle theme"
+        >
+          <i class="fa-solid fa-moon" id="themeIcon"></i>
+        </button>
+        <div class="clock" id="liveClock">
+          <span id="clockTime">--:--</span>
+          <span id="clockDate">—</span>
+        </div>
+        <div class="avatar" title="You">S</div>
+      </div>
+    </header>
+
+    <main class="app">
+      <!-- ============ HERO ============ -->
+      <section class="hero">
+        <div class="hero__intro">
+          <p class="hero__eyebrow" id="greetingEyebrow">GOOD MORNING</p>
+          <h1 class="hero__title">
+            Here's your day, <span id="userName">SURYA</span>.
+          </h1>
+          <p class="hero__sub" id="heroSummary">Loading today's plan…</p>
+        </div>
+
+        <button class="btn btn--primary hero__cta" id="openAddTask">
+          <i class="fa-solid fa-plus"></i> New task
+        </button>
+      </section>
+
+      <!-- ============ DATE RAIL ============ -->
+      <nav class="date-rail" id="dateRail" aria-label="Select day">
+        <button
+          class="date-rail__nav"
+          id="dateRailPrev"
+          aria-label="Scroll earlier"
+        >
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <div class="date-rail__track" id="dateRailTrack"></div>
+        <button
+          class="date-rail__nav"
+          id="dateRailNext"
+          aria-label="Scroll later"
+        >
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </nav>
+
+      <!-- ============ BODY GRID ============ -->
+      <div class="grid">
+        <!-- ---- TIMELINE (LEFT) ---- -->
+        <section class="panel timeline-panel" aria-label="Task timeline">
+          <div class="panel__head">
+            <h2>Timeline <span class="muted" id="timelineDateLabel"></span></h2>
+            <div class="chip-filters" id="chipFilters">
+              <button class="chip is-active" data-filter="all">All</button>
+              <button class="chip" data-filter="pending">Pending</button>
+              <button class="chip" data-filter="completed">Completed</button>
+              <button class="chip" data-filter="overdue">Overdue</button>
+            </div>
+          </div>
+
+          <div class="spine-wrap">
+            <div class="spine-track">
+              <div class="spine-fill" id="spineFill"></div>
+            </div>
+            <ol class="task-list" id="taskList">
+              <!-- injected -->
+            </ol>
+
+            <div class="empty-state" id="emptyState" hidden>
+              <i class="fa-solid fa-mug-hot"></i>
+              <h3>Nothing scheduled</h3>
+              <p>
+                This day is a clean slate. Add a task to start filling the rail.
+              </p>
+              <button class="btn btn--ghost" id="emptyAddBtn">
+                <i class="fa-solid fa-plus"></i> Add the first task
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ---- SIDEBAR (RIGHT) ---- -->
+        <aside class="side-col">
+          <!-- Completion ring -->
+          <section class="panel ring-panel tilt" aria-label="Today completion">
+            <div class="ring-panel__ring">
+              <svg viewBox="0 0 140 140" width="140" height="140">
+                <circle class="ring-bg" cx="70" cy="70" r="60"></circle>
+                <circle
+                  class="ring-fg"
+                  id="ringFg"
+                  cx="70"
+                  cy="70"
+                  r="60"
+                ></circle>
+              </svg>
+              <div class="ring-panel__center">
+                <span class="ring-panel__pct" id="pctText">0%</span>
+                <span class="ring-panel__label">complete</span>
+              </div>
+            </div>
+            <div class="ring-panel__stats">
+              <div><strong id="statTotal">0</strong><span>total</span></div>
+              <div><strong id="statDone">0</strong><span>done</span></div>
+              <div><strong id="statLeft">0</strong><span>left</span></div>
+            </div>
+          </section>
+
+          <!-- Weekly bars -->
+          <section class="panel week-panel tilt" aria-label="Weekly completion">
+            <div class="panel__head panel__head--tight">
+              <h2>This week</h2>
+              <span class="muted" id="weekAvg">—</span>
+            </div>
+            <div class="week-bars" id="weekBars"><!-- injected --></div>
+          </section>
+
+          <!-- Categories -->
+          <section class="panel cat-panel tilt" aria-label="Categories">
+            <div class="panel__head panel__head--tight">
+              <h2>Categories</h2>
+            </div>
+            <div class="cat-list" id="catList"><!-- injected --></div>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Flow — built for people who like watching a bar fill up.
+        <span id="footYear"></span>
+      </p>
+    </footer>
+
+    <!-- ============ ADD/EDIT TASK MODAL ============ -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <div class="modal__head">
+          <h3 id="modalTitle">New task</h3>
+          <button class="icon-btn" id="modalClose" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form id="taskForm" class="modal__body">
+          <input type="hidden" id="taskId" />
+
+          <label class="field">
+            <span>Title</span>
+            <input
+              type="text"
+              id="taskTitle"
+              placeholder="e.g. Ship the landing page"
+              required
+              maxlength="80"
+            />
+          </label>
+
+          <div class="field-row">
+            <label class="field">
+              <span>Date</span>
+              <input type="date" id="taskDate" required />
+            </label>
+            <label class="field">
+              <span>Time</span>
+              <input type="time" id="taskTime" required />
+            </label>
+          </div>
+
+          <div class="field-row">
+            <label class="field">
+              <span>Category</span>
+              <select id="taskCategory">
+                <option value="work">Work</option>
+                <option value="personal">Personal</option>
+                <option value="health">Health</option>
+                <option value="study">Study</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Priority</span>
+              <select id="taskPriority">
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Notes <em>(optional)</em></span>
+            <textarea
+              id="taskNotes"
+              rows="2"
+              placeholder="Any details worth remembering"
+            ></textarea>
+          </label>
+
+          <div class="modal__actions">
+            <button
+              type="button"
+              class="btn btn--ghost"
+              id="deleteTaskBtn"
+              hidden
+            >
+              <i class="fa-solid fa-trash"></i> Delete
+            </button>
+            <div class="spacer"></div>
+            <button type="button" class="btn btn--ghost" id="cancelTaskBtn">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn--primary" id="saveTaskBtn">
+              Save task
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast root -->
+    <div class="toast-root" id="toastRoot" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
